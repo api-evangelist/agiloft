@@ -1,0 +1,55 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+note: >-
+  Agiloft publishes no public sandbox, no test-mode key prefix, no magic test values and no hosted
+  playground an outsider can reach. What it does publish is an in-product interactive console and
+  an explicit test-environment practice, captured below. Nothing here is a credential or a test
+  value — Agiloft publishes none, and none is invented.
+public_sandbox: false
+test_live_separation:
+  mechanism: separate knowledgebases
+  key_prefixes: none
+  note: >-
+    Agiloft has no test-mode token namespace. The separation is environmental: customers run a test
+    KB alongside production and push changes between them. Credentials, OAuth clients and SCIM
+    tokens are per-KB, so a test KB's tokens simply cannot reach production.
+  promotion_path:
+    name: Pushing Changes to Production
+    docs: https://help.agiloft.com/space/HELP/43714330
+console:
+  name: In-KB Swagger UI
+  location: Setup > System > View REST documentation
+  interactive: true
+  try_it_out: true
+  generated_from: the tenant's own live tables and fields
+  downloadable_spec: Download Open API JSON
+  auth_flow: >-
+    Execute POST /login from the Try It Out panel with a REST-enabled user's login and password
+    plus the KB name and two-letter language code, copy the access token from the Server response,
+    then click Authorize and paste it. One authorization lasts until the 15-minute default token
+    expiry.
+  public: false
+  note: >-
+    Reachable only from inside an authenticated knowledgebase, so it is a customer console rather
+    than a public playground.
+  docs: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+testing_guidance:
+- >-
+    "Testing API calls should always be performed in test KBs, rather than a production
+    environment. If you have no other choice but to use the production environment, use extreme
+    caution." — Agiloft, OpenAPI Interface.
+- >-
+    Agiloft's docs describe stepping through a PUT on a real record from the console, so the Try It
+    Out panel executes live writes against whichever KB authorized it. There is no dry-run.
+- >-
+    The API interfaces are not recommended for bulk synchronization; Agiloft directs that work to
+    Importing Record Data, Pushing Changes to Production, the External System Adapter and prebuilt
+    integrations.
+test_values: []
+test_clocks: false
+fixtures: false
+trial_access:
+  self_serve: false
+  route: https://www.agiloft.com/lets-talk
+  note: Access to an Agiloft environment is arranged through a demo or sales conversation, not a self-serve signup.

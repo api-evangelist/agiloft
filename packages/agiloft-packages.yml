@@ -1,0 +1,72 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+package_count: 0
+official_sdk_count: 0
+note: >-
+  Agiloft publishes no client library to any public package registry, and no SDKs pointer is
+  emitted for this repo because there is no first-party SDK to point at. Searched 2026-09-12:
+  registry.npmjs.org (no @agiloft scope, no agiloft package), pypi.org/pypi/agiloft/json (404),
+  and api.github.com/orgs/agiloft (404 — Agiloft has no GitHub organization). A GitHub code search
+  for "agiloft" returns only third-party work: a Docker installer, integration experiments and a
+  Python REST example by an individual. What Agiloft ships instead is described under
+  code_generators below — per-table sample code generated from inside the knowledgebase, not a
+  versioned, installable library.
+packages: []
+code_generators:
+- name: Java Web Services sample
+  official: true
+  registry: none
+  distribution: generated and downloaded from inside the knowledgebase (Setup > [Table] > API tab > Download Java Sample)
+  version: null
+  published: null
+  note: >-
+    A set of table-specific code samples covering each API function for the selected table. There
+    is no registry metadata endpoint to query because it is generated per tenant per table, so
+    version and published date are null by nature, not unchecked. It is sample code, not a
+    maintained SDK — nothing versions it and nothing publishes it.
+  source: https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+- name: .NET Web Services sample
+  official: true
+  registry: none
+  distribution: generated and downloaded from inside the knowledgebase (Setup > [Table] > API tab > Download .NET Sample)
+  version: null
+  published: null
+  note: Same shape as the Java sample — per-table generated sample code, no registry, no version.
+  source: https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+- name: HTML form sample
+  official: true
+  registry: none
+  distribution: generated from inside the knowledgebase (Setup > [Table] > API tab > Download HTML)
+  version: null
+  published: null
+  note: >-
+    Emits an embeddable form with a Submit button that creates a record in the chosen table as a
+    chosen user, using a chosen layout.
+  source: https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+- name: SOAP client via WSDL2Java
+  official: false
+  registry: none
+  distribution: the customer generates a client from their KB's own generated WSDL
+  version: null
+  published: null
+  note: >-
+    Agiloft documents Apache Axis WSDL2Java against the per-KB WSDL. The generated client is the
+    customer's artifact; Agiloft publishes neither the WSDL nor a compiled client.
+  source: https://help.agiloft.com/space/HELP/43716450/Legacy%20SOAP%20API%20Setup
+- name: OpenAPI JSON download
+  official: true
+  registry: none
+  distribution: Download Open API JSON from the in-KB Swagger UI (Setup > System > View REST documentation)
+  version: null
+  published: null
+  note: >-
+    Not a package, recorded here because it is the only machine-readable client-generation input
+    Agiloft ships. It is generated from that tenant's live tables and fields, and Agiloft suggests
+    importing it into Postman. It is not downloadable without KB credentials.
+  source: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+registries_searched:
+- {registry: npm, query: agiloft, result: no first-party package}
+- {registry: PyPI, query: agiloft, result: 404}
+- {registry: GitHub organizations, query: agiloft, result: 404 — no organization}
+- {registry: GitHub repository search, query: agiloft, result: 18 repositories, all third-party}

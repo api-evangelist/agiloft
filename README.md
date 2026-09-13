@@ -64,5 +64,31 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Agiloft is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+Agiloft is a Redwood City, California software company selling an enterprise Contract Lifecycle
+Management (CLM) platform built on a no-code business process engine, used by legal, procurement,
+finance and IT teams across the contract lifecycle.
+
+Every Agiloft deployment is a customer-specific knowledgebase (KB) whose tables and fields are
+configured per tenant, so the API contract is **generated from that live configuration** rather
+than published as one fixed catalog spec. Agiloft exposes three machine interfaces per KB:
+
+- an **OpenAPI / Swagger interface** generated from the tenant's own tables, browsable and
+  downloadable inside the KB at *Setup > System > View REST documentation*;
+- a stable **REST operation interface** under `/ewws/` — twenty documented operations covering
+  create, read, update, delete, upsert, select, search, attachments, locking, table introspection
+  and action-button execution;
+- a **legacy SOAP interface** whose WSDL is likewise generated per knowledgebase and disabled by
+  default.
+
+It also ships an outbound **webhook** service with a `Verification-Code` handshake and a published
+retry schedule, and **SCIM 2.0** user provisioning at `/scim/v2`. Authorization is OAuth 2.0
+(authorization code, authorization code with PKCE, and client credentials) or JWT bearer tokens.
+
+**No public machine-readable contract.** The OpenAPI and the WSDL both exist and are both real, but
+both are tenant-scoped and reachable only from inside an authenticated knowledgebase, so neither is
+harvested here. Every artifact in this repository is built from Agiloft's public reference
+documentation at <https://help.agiloft.com>, which serves an `llms.txt` and a Markdown twin of
+every page.
+
+- <https://www.agiloft.com/>
+- <https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services>

@@ -1,0 +1,23 @@
+generated: '2026-09-12'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: www.agiloft.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Dec  9 14:58:39 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: help.agiloft.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 25 00:17:09 2026 GMT
+  hsts: true
+  hsts_max_age: 34560000
+domains:
+- domain: agiloft.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none

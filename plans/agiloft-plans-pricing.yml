@@ -1,0 +1,42 @@
+generated: '2026-09-12'
+method: searched
+source: https://www.agiloft.com/pricing
+plan_count: 0
+currency: null
+note: >-
+  Agiloft publishes no prices, no tier table and no per-seat rate. https://www.agiloft.com/pricing
+  is a quote-request page — the calls to action are "Get Pricing" and "Schedule a Demo", and the
+  body renders client-side from Webflow with no pricing content in the served HTML. This is the
+  enterprise contact-sales pattern, recorded as plan_count 0 rather than omitted.
+plans: []
+editions:
+- name: Platform
+  note: >-
+    The current edition. API services (OpenAPI, REST and SOAP) are included with the Platform
+    edition of Agiloft CLM.
+  price: not published
+- name: Advanced
+  status: legacy
+  note: On older editions, API services require either Advanced or Premium.
+  price: not published
+- name: Premium
+  status: legacy
+  note: On older editions, API services require either Advanced or Premium.
+  price: not published
+edition_source: https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+licensing_notes:
+- >-
+    API access is gated by edition, not metered by call volume — there is no published per-call or
+    per-request charge, and no rate limit (see rate-limits/agiloft-rate-limits.yml).
+- >-
+    Each OAuth 2.0 client must be bound to its own native Agiloft service-user account, and each
+    such account requires an Admin or Standard license. So the real cost of an integration is
+    measured in licensed seats, one per OAuth client, not in API calls.
+- >-
+    Group membership in the REST allow-list (Setup > System > Manage Web Services) is an additional
+    gate on top of the license.
+commercial_pages:
+  pricing: https://www.agiloft.com/pricing
+  quote_request: https://www.agiloft.com/lets-talk
+  support_plans: https://www.agiloft.com/support-plans
+  services_agreement: https://www.agiloft.com/terms-policies/services-agreement

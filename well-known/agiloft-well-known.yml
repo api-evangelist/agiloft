@@ -1,0 +1,108 @@
+generated: '2026-09-12'
+method: probed
+source: live probe of the /.well-known/ surface on every host this record knows
+note: >-
+  No /.well-known/ document was served by any Agiloft host. www.agiloft.com answers every
+  /.well-known/ path with an honest 404 ("Invalid .well-known") and the negative control 404s
+  with it. help.agiloft.com returns 403 for the entire /.well-known/ prefix and for /apis.json —
+  a CDN edge policy on the Refined-hosted docs site, not a document. community.agiloft.com is a
+  catch-all: it answered 200 with the same ~51KB HTML portal shell for security.txt,
+  openid-configuration, api-catalog and /apis.yml, so those 200s are NOT documents and are
+  recorded as soft-404s. No WellKnown, SecurityTxt or APICatalog pointer is emitted, because
+  nothing was fetched and saved. Agiloft's OAuth 2.0 authorization and token endpoints exist but
+  are per-knowledgebase paths (/ewws/oauth, /ewws/otoken) with no RFC 8414 discovery document.
+hit_count: 0
+path_echo_control: passed
+hosts:
+- host: https://www.agiloft.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agiloft-negative-control-7f3ab91c.json, status: 404, note: negative control}
+- host: https://help.agiloft.com
+  note: >-
+    Edge returns 403 for the whole /.well-known/ prefix and for /apis.json — a bot/WAF policy on
+    the docs CDN. The negative control also 403s, so nothing here is a document.
+  documents:
+  - {path: /.well-known/security.txt, status: 403}
+  - {path: /.well-known/openid-configuration, status: 403}
+  - {path: /.well-known/oauth-authorization-server, status: 403}
+  - {path: /.well-known/oauth-protected-resource, status: 403}
+  - {path: /.well-known/api-catalog, status: 403}
+  - {path: /.well-known/ai-plugin.json, status: 403}
+  - {path: /.well-known/agent-card.json, status: 403}
+  - {path: /.well-known/agent.json, status: 403}
+  - {path: /.well-known/aauth-resource.json, status: 403}
+  - {path: /.well-known/ucp.json, status: 403}
+  - {path: /.well-known/apis.json, status: 403}
+  - {path: /apis.json, status: 403}
+  - {path: /apis.yml, status: 403}
+  - {path: /.well-known/agiloft-negative-control-7f3ab91c.json, status: 403, note: negative control}
+- host: https://community.agiloft.com
+  note: >-
+    Catch-all portal. Four paths returned 200 with the identical ~51KB HTML community-portal
+    shell, not a document; they are recorded as soft-404 and no file was saved.
+  soft_404_control: {bytes: 51548, content_type: text/html}
+  documents:
+  - {path: /.well-known/security.txt, status: 200, soft_404: true}
+  - {path: /.well-known/openid-configuration, status: 200, soft_404: true}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 200, soft_404: true}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 200, soft_404: true}
+  - {path: /.well-known/agiloft-negative-control-7f3ab91c.json, status: 404, note: negative control}
+- host: https://support.agiloft.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agiloft-negative-control-7f3ab91c.json, status: 404, note: negative control}
+- host: https://status.agiloft.com
+  documents:
+  - {path: /.well-known/security.txt, status: 404}
+  - {path: /.well-known/openid-configuration, status: 404}
+  - {path: /.well-known/oauth-authorization-server, status: 404}
+  - {path: /.well-known/oauth-protected-resource, status: 404}
+  - {path: /.well-known/api-catalog, status: 404}
+  - {path: /.well-known/ai-plugin.json, status: 404}
+  - {path: /.well-known/agent-card.json, status: 404}
+  - {path: /.well-known/agent.json, status: 404}
+  - {path: /.well-known/aauth-resource.json, status: 404}
+  - {path: /.well-known/ucp.json, status: 404}
+  - {path: /.well-known/apis.json, status: 404}
+  - {path: /apis.json, status: 404}
+  - {path: /apis.yml, status: 404}
+  - {path: /.well-known/agiloft-negative-control-7f3ab91c.json, status: 404, note: negative control}
+a2a:
+  agent_card: not-found
+  note: >-
+    /.well-known/agent-card.json and /.well-known/agent.json miss on every host. No a2a/ artifact
+    is written — an agent card is search-only and is never authored on a provider's behalf.

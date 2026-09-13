@@ -1,0 +1,74 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43714342/Webhooks
+spec_type: none
+note: >-
+  Agiloft publishes no AsyncAPI document and no event-catalog spec. It does publish a complete,
+  substantive webhook reference, captured here as a webhook catalog. The event surface is
+  generic rather than a fixed list of named event types: a subscriber names a TABLE and an event
+  type (Create, Update or Delete), so the concrete events in any deployment are a product of that
+  tenant's own table configuration. That is why no channel list is enumerated below — enumerating
+  one would mean inventing table names Agiloft does not publish.
+transport: HTTPS POST from Agiloft to a subscriber-supplied URL
+registration:
+  api: 'POST /ewws/webhooks'
+  ui: Setup > Integration > Webhooks Setup
+  auth: OAuth access token, JWT token, or user credentials
+  request_content_type: application/json
+  response_status: 201
+  response_body: '{"id": integer, "webhook_key": ""}'
+  response_header: 'Location: URL of the newly created webhook resource'
+  permissions: >-
+    The caller needs the same permissions that grant access to Webhooks Setup. A user without them
+    may only register or modify their own entries, and must set user_permissions to their own login.
+management_operations:
+- {method: POST, path: /ewws/webhooks, description: Register a new webhook subscription}
+- {method: GET, path: /ewws/webhooks, description: Retrieve one webhook by wh_key, or list webhooks filtered by byStatus, byEventType, byTable or byField}
+- {method: PUT, path: /ewws/webhooks, description: Update an existing webhook subscription}
+- {method: DELETE, path: /ewws/webhooks, description: Remove a webhook subscription}
+event_types: [Create, Update, Delete]
+modification_types:
+- {value: Email, meaning: updates made by inbound email}
+- {value: Web, meaning: user interactions with records through the web portal}
+- {value: API, meaning: record edits made by the REST API}
+- {value: (empty), meaning: fire regardless of how the record was modified}
+subscription_fields:
+- {name: webhook_url, required: true, description: HTTPS URL Agiloft POSTs the notification to; must be reachable from the public internet}
+- {name: table_name, required: true, description: The KB table whose changes are tracked}
+- {name: event_type, required: true, description: Create, Update or Delete}
+- {name: user_permissions, required: true, description: Login whose permissions the webhook call runs under; limits which fields are sent}
+- {name: title, required: true}
+- {name: description, required: true}
+- {name: webhook_status, required: true, description: Active or Inactive; new webhooks default to inactive}
+- {name: entry_fields, required: false, description: Field NAMES (not labels) to include in the notification body, comma delimited}
+- {name: record_filter, required: false, description: 'Search expression limiting which records fire, using ==, !=, <, <=, >, >=, && and ||; saved searches are not accepted here'}
+- {name: modification_type, required: false}
+- {name: state_key, required: false, description: Returned to the client as a header; recommended as CSRF protection. Max 255 characters}
+- {name: webhook_confirmation, required: false, description: Yes (default) requires the subscriber to echo Verification-Code; No accepts any 2XX}
+- {name: by_rule, required: false, description: Yes routes the event through a Rule action instead of the standard real-time workflow}
+- {name: webhook_http_headers, required: false, description: 'Extra headers to send, one key: value pair per line. Underscores are not allowed in webhook headers'}
+verification:
+  method: HTTPS GET to the subscriber URL carrying a Verification-Code header
+  accepted_responses:
+  - 2XX with the same Verification-Code echoed in a response header
+  - 2XX with a JSON body whose Verification-Code key holds the same value
+  when: on registration, and on any update that moves a webhook from Inactive to Active
+  ongoing: >-
+    Every notification also carries Verification-Code and is considered delivered only if answered
+    the same way, unless webhook_confirmation is set to No.
+delivery:
+  retries: 5
+  schedule: [10 seconds, 30 seconds, 5 minutes, 15 minutes, 40 minutes]
+  note: >-
+    A webhook marked Inactive stops receiving events and any unprocessed queued events for it are
+    cancelled. Disabling before deletion is required — deleting an entry without disabling leaves
+    the webhook active until the next KB restart.
+security:
+  transport: HTTPS required
+  csrf: state_key returned as a header
+  authenticity: Verification-Code challenge on registration and on every notification
+  integration_hub: >-
+    As of the July 2026 release, Integration Hub connector webhooks additionally carry
+    environment-specific details and a signature which the connector validates before triggering a
+    recipe, so a development KB cannot trigger a production recipe.
+errors: errors/agiloft-error-codes.yml

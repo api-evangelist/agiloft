@@ -1,0 +1,81 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43715649/What's%20New
+scheme: numbered platform releases with dated monthly sections
+current_version: Release 34
+previous_version: Release 33
+previous_version_url: https://help.agiloft.com/space/HELP/779092083
+cadence:
+  core_platform: February, July and November feature releases, plus monthly maintenance releases
+  connected_services: monthly feature releases, plus anytime maintenance releases
+window: Release 34 (July 2026 through September 2026)
+note: >-
+  The What's New page carries the full change list for the current numbered release, including its
+  monthly maintenance releases and the Connected Services changes made in the same period. Earlier
+  releases each keep their own page. Entries below are the recent window only; the live page is the
+  source of truth. Agiloft does not mark entries as breaking versus additive, so the classification
+  below is left unasserted rather than guessed.
+entries:
+- version: Release 34
+  component: Agiloft Core Platform
+  date: '2026-07'
+  breaking: null
+  highlights:
+  - >-
+      SCIM 2.0 user provisioning introduced. An identity provider becomes the source of truth for
+      user accounts, creating, updating, deactivating and reactivating KB users automatically.
+      Group and custom-attribute sync are not yet supported.
+  - >-
+      Integration Hub connector security hardened: Agiloft now adds environment-specific details
+      and a signature to outbound webhook requests, and the connector validates source and
+      signature before triggering a recipe, so a development KB cannot trigger a production recipe.
+      Existing recipes must be stopped and restarted to pick it up.
+  - Word app login persists across sessions until the user manually logs out.
+  - >-
+      User activation and deactivation via a new User Is Active field on the People table,
+      deactivation ends active sessions immediately and stops outbound email, without losing audit
+      data.
+  - Replies to comment-notification emails are discarded rather than run through inbound email rules; notifications now send from no-reply@agiloft.com.
+  - Dashboard localization; dashboards can be filtered by Choice fields.
+  - Time-based rule start times can be fine-tuned; $global.null clears an entire linked set.
+  - Obsolete integrations removed.
+  - Bug fixes.
+- version: Release 34
+  component: Connected Services
+  date: '2026-07'
+  breaking: null
+  highlights:
+  - Astra contract analysis reachable directly from Ask AI.
+  - Ask AI can create new records automatically and update contracts directly.
+  - Better table-data extraction from OCR documents.
+  - Bug fixes.
+- version: Release 34
+  component: Agiloft Core Platform
+  date: '2026-08'
+  breaking: null
+  highlights:
+  - E-signature objects sync with the Agiloft for Salesforce integration.
+  - Bug fixes.
+- version: Release 34
+  component: Connected Services
+  date: '2026-08'
+  breaking: null
+  highlights:
+  - Ask AI can update multiple contracts at once.
+  - New Ask AI Setup page for configuration.
+  - Updated models for Prompt Lab.
+  - Bug fixes.
+- version: Release 34
+  component: Agiloft Core Platform
+  date: '2026-09'
+  breaking: null
+  highlights:
+  - Bug fixes.
+- version: Release 34
+  component: Connected Services
+  date: '2026-09'
+  breaking: null
+  highlights:
+  - Bug fixes.
+related:
+  astra_release_notes: https://help.agiloft.com/space/Astra/570425354/What's%20New%20in%20Astra

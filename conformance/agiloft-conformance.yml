@@ -1,0 +1,134 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+note: >-
+  Asserted from Agiloft's own published documentation, not derived from a spec — Agiloft's OpenAPI
+  is generated per knowledgebase and only reachable inside an authenticated KB, so there is no
+  public contract to parse for securitySchemes or media types.
+standards:
+- id: oauth2
+  name: OAuth 2.0 (RFC 6749)
+  conforms: true
+  evidence: >-
+    Authorization endpoint /ewws/oauth and token endpoint /ewws/otoken, supporting the
+    authorization code and client credentials grants, with the RFC 6749 error codes
+    (invalid_request, unauthorized_client, access_denied, unsupported_response_type, invalid_scope,
+    server_error) returned on the redirect.
+  source: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+- id: rfc7636-pkce
+  name: Proof Key for Code Exchange (RFC 7636)
+  conforms: true
+  evidence: >-
+    Authorization Code with PKCE is supported and recommended for public clients. Both S256 and
+    plain code_challenge_method values are accepted, with the documented 43-128 character
+    code_verifier constraint and the S256 derivation stated explicitly.
+  source: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+- id: rfc6750-bearer
+  name: OAuth 2.0 Bearer Token Usage (RFC 6750)
+  conforms: true
+  evidence: >-
+    Tokens are presented in an Authorization header prefixed by the authentication scheme returned
+    from EWLogin, which defaults to Bearer.
+  source: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+- id: jwt
+  name: JSON Web Token (RFC 7519)
+  conforms: true
+  evidence: >-
+    EWLogin returns a JWT access_token plus a refresh_token, expiration_time_unit, expires_in and
+    authentication_scheme; EWLogout terminates the session bound to the token.
+  source: https://help.agiloft.com/space/HELP/43714204/REST%20-%20Login
+- id: scim2
+  name: SCIM 2.0 (RFC 7643 / RFC 7644)
+  conforms: true
+  domain_standard: true
+  domain: identity and access management
+  evidence: >-
+    Agiloft CLM serves a SCIM 2.0 service per knowledgebase at https://{hostname}/scim/v2,
+    authenticated with a bearer token generated from the KB's SCIM profile, and documents
+    integration with any SCIM 2.0 identity provider (Microsoft Entra ID and Okta are given as
+    worked examples, configured by tenant URL plus secret token). Users are created, updated,
+    deactivated and reactivated from the IdP; an External ID (SCIM) field is added to the People
+    table to hold the IdP identifier.
+  limitations: >-
+    Group and team synchronization and custom attributes are not supported at this time; group
+    support is stated as planned for a later release.
+  source: https://help.agiloft.com/space/HELP/778928159/Set%20Up%20SCIM
+- id: saml2
+  name: SAML 2.0
+  conforms: true
+  evidence: SAML 2.0 is a supported SSO method and can carry attributes used to provision users at sign-in.
+  source: https://help.agiloft.com/space/HELP/43718160
+- id: webhooks
+  name: HTTP webhooks with subscriber verification
+  conforms: true
+  evidence: >-
+    Outbound HTTPS POST notifications on record Create/Update/Delete, with a Verification-Code
+    challenge on registration and on every delivery, a state key for CSRF protection, and a
+    published five-attempt retry schedule.
+  source: https://help.agiloft.com/space/HELP/43714342/Webhooks
+- id: openapi
+  name: OpenAPI
+  conforms: true
+  public: false
+  evidence: >-
+    Agiloft generates an OpenAPI document and Swagger UI from each knowledgebase's live tables and
+    fields, with a Download Open API JSON action. The document is real but tenant-scoped and only
+    reachable from inside the KB at Setup > System > View REST documentation, so no version is
+    asserted and no copy exists in this repo.
+  source: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+- id: soap-wsdl
+  name: SOAP 1.x / WSDL
+  conforms: true
+  public: false
+  status: legacy
+  evidence: >-
+    A WSDL is generated per knowledgebase describing every table type (all extending a common
+    EWWSBaseUserObject) and is consumed with tools such as Apache Axis WSDL2Java. SOAP is disabled
+    by default and the WSDL is only obtainable from an enabled KB, so no copy exists in this repo.
+  source: https://help.agiloft.com/space/HELP/43716450/Legacy%20SOAP%20API%20Setup
+- id: rfc9457-problem-details
+  name: RFC 9457 Problem Details
+  conforms: false
+  evidence: >-
+    No application/problem+json anywhere in the docs. Errors use vendor envelopes — an
+    error/error_description JSON object on the webhook service, a success/message/result object on
+    the JSON-decorated REST calls, and typed SOAP faults.
+- id: odata
+  name: OData
+  conforms: false
+  evidence: >-
+    An EWOData operation appears in the published Available Operations list for the REST scope
+    parameter, but Agiloft publishes no OData reference, no $metadata endpoint and no service
+    document, so no OData conformance can be asserted. Recorded as a lead, not a claim.
+  source: https://help.agiloft.com/space/HELP/43714795/Control%20Access%20to%20REST%20API%20Operations
+- id: rfc8594-sunset
+  name: RFC 8594 Sunset header
+  conforms: false
+  evidence: No Sunset or Deprecation header support and no published API deprecation policy.
+- id: rfc9116-security-txt
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: /.well-known/security.txt returns 404 on every Agiloft host probed 2026-09-12.
+compliance:
+  published: true
+  page: https://www.agiloft.com/terms-policies/security
+  certifications:
+  - SOC 1
+  - SOC 2
+  - ISO 27001
+  - ISO 27701
+  practices:
+  - >-
+      Third-party penetration assessments of the Agiloft application and hosting infrastructure,
+      performed annually and after all major upgrades, using both manual and automated techniques.
+  hosting:
+    provider: AWS
+    note: >-
+      Agiloft's security page describes the hosted service as fully redundant AWS inside or outside
+      the USA, and points at AWS's own SSAE 18, SOC 2 Type 2, HIPAA and GDPR compliance. Those are
+      AWS's attestations, not Agiloft's, and are recorded here as such.
+  data_protection:
+  - {name: Data Processing Addendum, url: 'https://www.agiloft.com/terms-policies/data-processing-addendum'}
+  - {name: EU Data Act Addendum, url: 'https://www.agiloft.com/terms-policies/eu-data-act-addendum'}
+  - {name: Subprocessor List, url: 'https://www.agiloft.com/terms-policies/subprocessor-list'}
+  - {name: Privacy Shield Notice, url: 'https://www.agiloft.com/terms-policies/privacy-shield-notice'}

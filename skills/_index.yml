@@ -1,0 +1,27 @@
+generated: '2026-09-12'
+method: generated
+source: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+note: >-
+  Generated from Agiloft's published REST, webhook and OAuth reference. Every endpoint, parameter,
+  error code and behaviour cited in these skills is stated in Agiloft's own public documentation —
+  none is invented. They are grounded in documented operation names rather than in OpenAPI
+  operationIds because Agiloft's OpenAPI document is generated per knowledgebase and is only
+  reachable from inside an authenticated KB. Hostname, KB name and credentials are the caller's and
+  are left as placeholders throughout.
+skills:
+- file: agiloft-authenticate-and-discover.md
+  name: Authenticate against an Agiloft knowledgebase and discover its schema
+  api: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+  operations: [EWLogin, EWTable, EWLogout]
+- file: agiloft-search-and-page.md
+  name: Search an Agiloft table and page through results safely
+  api: https://help.agiloft.com/space/HELP/43717730/REST%20-%20Search
+  operations: [EWSearch, EWNLPSearch, EWSavedSearch, EWSelect, GetChoiceLineID]
+- file: agiloft-write-records-safely.md
+  name: Create, update and delete Agiloft records safely
+  api: https://help.agiloft.com/space/HELP/763691019/REST%20-%20Upsert
+  operations: [EWCreate, EWUpdate, EWUpsert, EWDelete, EWLock, EWAsyncStatus, EWRead]
+- file: agiloft-subscribe-to-webhooks.md
+  name: Subscribe to Agiloft record events with webhooks
+  api: https://help.agiloft.com/space/HELP/43714342/Webhooks
+  operations: [webhooks]

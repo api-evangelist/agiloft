@@ -1,0 +1,140 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43714342/Webhooks
+docs:
+- https://help.agiloft.com/space/HELP/43714342/Webhooks
+- https://help.agiloft.com/space/HELP/43715095/SOAP%20API%20Call%20Basics
+- https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+format: vendor
+note: >-
+  Agiloft does not publish RFC 9457 problem+json. It publishes three separate, differently shaped
+  error registries, captured below: a JSON error/error_description envelope on the webhook service,
+  the RFC 6749 error codes on the OAuth authorization endpoint, and six typed SOAP faults on the
+  legacy SOAP interface. The /ewws/ REST operations themselves return errors as a message in the
+  same EWREST_/JSON envelope as a success, so there is no distinct REST status-code registry to
+  harvest; the docs also warn that these lists are not exhaustive and that new codes may be added.
+envelopes:
+- surface: webhook service
+  shape: '{"error": "", "error_description": ""}'
+  content_type: application/json
+- surface: OAuth authorization endpoint (/ewws/oauth)
+  shape: query-string parameters error and error_description on the redirect
+- surface: REST /ewws/ operations (JSON decorator)
+  shape: '{"success": false, "message": "...", "result": {}}'
+- surface: SOAP
+  shape: SOAP fault message with additional information
+problems:
+- code: BAD_REQUEST
+  status: 400
+  title: The request provided is invalid.
+  surface: webhooks
+- code: INVALID_JSON
+  status: 400
+  title: An invalid JSON was specified.
+  surface: webhooks
+- code: MISC_ERROR
+  status: 400
+  title: Some miscellaneous error has occurred.
+  surface: webhooks
+- code: INVALID_PARAMETERS
+  status: 400
+  title: Some parameters in the request are invalid.
+  surface: webhooks
+- code: MISSING_REQUIRED_PARAM
+  status: 400
+  title: The required parameters are missing.
+  surface: webhooks
+- code: INVALID_URL
+  status: 400
+  title: An invalid webhook URL was specified.
+  surface: webhooks
+  remediation: >-
+    The URL must be HTTPS, reachable from the public internet, and must answer the verification GET
+    by echoing the Verification-Code header or returning it in a JSON body.
+- code: WEBHOOK_LIMIT_EXCEEDED
+  status: 400
+  title: The events array has reached the maximum number of active webhooks.
+  surface: webhooks
+- code: UNAUTHORIZED
+  status: 401
+  title: Client must authenticate itself to get the requested response.
+  surface: webhooks
+- code: INVALID_ACCESS_TOKEN
+  status: 401
+  title: An access token provided in the request is invalid or has expired.
+  surface: webhooks
+  remediation: >-
+    Access tokens default to a 15-minute lifetime (configurable 1-60). Refresh with
+    POST /ewws/EWLogin?refresh_token=... or re-run the OAuth token request.
+- code: INVALID_LOGIN
+  status: 401
+  title: The login provided in the request is invalid or has blocked.
+  surface: webhooks
+- code: FORBIDDEN
+  status: 403
+  title: The client does not have access rights to the content.
+  surface: webhooks
+  remediation: >-
+    Check both halves of Agiloft's authorization model: the user's group permissions AND the
+    interface allow-list at Setup > System > Manage Web Services > Groups allowed for REST.
+- code: WEBHOOK_CREATION_NOT_ALLOWED
+  status: 403
+  title: Webhook creation is not allowed.
+  surface: webhooks
+- code: INVALID_WEBHOOK_KEY
+  status: 404
+  title: An invalid webhook key was specified.
+  surface: webhooks
+- code: METHOD_NOT_ALLOWED
+  status: 405
+  title: The request method is known by the server but is not supported by the target resource.
+  surface: webhooks
+- code: SERVER_ERROR
+  status: 500
+  title: Some miscellaneous server error has occurred.
+  surface: webhooks
+- code: invalid_request
+  surface: oauth
+  spec: RFC 6749
+  title: >-
+    The request is missing a required parameter, includes an invalid parameter value, includes a
+    parameter more than once, or is otherwise malformed.
+- code: unauthorized_client
+  surface: oauth
+  spec: RFC 6749
+  title: The client is not authorized to request an authorization code using this method.
+- code: access_denied
+  surface: oauth
+  spec: RFC 6749
+  title: The resource owner or authorization server denied the request.
+- code: unsupported_response_type
+  surface: oauth
+  spec: RFC 6749
+  title: The authorization server does not support obtaining an authorization code using this method.
+- code: invalid_scope
+  surface: oauth
+  spec: RFC 6749
+  title: The requested scope is invalid, unknown, or malformed.
+  remediation: 'The scope parameter must be permissions_for:{CONTACT_ID} using the contact id from the API application configuration.'
+- code: server_error
+  surface: oauth
+  spec: RFC 6749
+  title: The authorization server encountered an unexpected condition that prevented it from fulfilling the request.
+soap_faults:
+- fault: EWIntegrityException
+  meaning: The knowledgebase setup has become incompatible with the client application's logic or expectations.
+- fault: EWOperationException
+  meaning: >-
+    The operation may not be performed because of dependencies between Agiloft functions. May be
+    permanent (a workflow forbids the state transition) or temporary (the record is locked by
+    another user or session).
+- fault: EWPermissionException
+  meaning: The username used to trigger the call lacks sufficient privileges for the operation.
+- fault: EWSessionException
+  meaning: The client session has expired or has been removed.
+- fault: EWUnexpectedException
+  meaning: >-
+    An unhandled server-side exception. The message carries a trace token and should be reported to
+    the vendor.
+- fault: EWWrongDataException
+  meaning: Data passed by the client is wrong in the context of the operation.

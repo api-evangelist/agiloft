@@ -1,0 +1,201 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+docs:
+- https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+- https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+- https://help.agiloft.com/space/HELP/763691019/REST%20-%20Upsert
+- https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+authentication:
+  style: bearer token (OAuth 2.0 or JWT) in the Authorization header, with legacy credential parameters
+  header: 'Authorization: Bearer {token}'
+  legacy: '$login / $password as query or POST-body parameters'
+  see: authentication/agiloft-authentication.yml
+url_conventions:
+  resource_style: '/ewws/REST/{kbName}/{table}[/{id}]'
+  operation_style: '/ewws/{operation}?$KB={kbName}&$table={table}&$lang={lang}'
+  system_parameter_prefix: '$'
+  system_parameters: ['$KB', '$table', '$login', '$password', '$lang', '$query', '$async']
+  case_sensitivity: KB names and table names are case sensitive; use the Logical Table Name shown at Setup > Tables
+  request_content_type: application/x-www-form-urlencoded
+  note: >-
+    POST is preferred over GET for any call carrying credentials, because the parameters can be
+    placed in the request body instead of the URL.
+response_format:
+  default: >-
+    JavaScript-evaluable assignments, one per field, each name prefixed EWREST_ and escaped using
+    JavaScript rules — for example EWREST_company_name='Agiloft';. Empty fields return null.
+    Extended characters are UTF-encoded.
+  json_decorator:
+    syntax: '/ewws/{operation}/.json?...'
+    envelope: '{"success": bool, "message": string, "result": {...}}'
+    note: The docs recommend the JSON decorator because JSON has more readily available parsers.
+  error_envelope:
+    shape: '{"error": "", "error_description": ""}'
+    scope: webhook service and OAuth authorization/token endpoints
+    see: errors/agiloft-error-codes.yml
+idempotency:
+  coverage: partial
+  mechanism: match-key upsert
+  header: null
+  scope:
+  - EWUpsert
+  description: >-
+    Agiloft publishes no Idempotency-Key header and no request-replay cache. It does ship one
+    genuinely idempotent write primitive: EWUpsert (POST /ewws/EWUpsert) takes a required $query
+    match expression such as external_id='SF-001234' and creates the record if no match exists or
+    updates it if one does, so replaying the same request converges on the same record instead of
+    creating a duplicate. Agiloft documents this as the operation for integrations and data
+    synchronization. Every other mutating operation — EWCreate, EWUpdate, EWDelete, EWAttach,
+    EWRemoveAttachment, EWActionButton, POST /ewws/webhooks — has no replay protection: a repeated
+    EWCreate creates a second record.
+  retention: not documented
+  transaction_semantics: >-
+    SOAP API calls (and by extension the write operations behind them) are committed automatically,
+    one transaction per call, analogous to SQL AUTOCOMMIT. EWDelete is all-or-nothing across the
+    record set: if any specified record cannot be deleted, none of them are.
+  evidence:
+  - https://help.agiloft.com/space/HELP/763691019/REST%20-%20Upsert
+  - https://help.agiloft.com/space/HELP/43715095/SOAP%20API%20Call%20Basics
+reversibility:
+  grade: documented
+  summary: >-
+    Agiloft documents one true reversal path on its API write surface — unlocking a record it
+    locked — and that path carries a stated window. It documents no undo, restore, undelete or
+    rollback operation for EWDelete, EWUpdate or EWCreate. An agent must treat EWDelete as
+    permanent through the API.
+  surfaces:
+  - operation: EWLock (PUT /ewws/EWLock)
+    reversal: EWLock (DELETE /ewws/EWLock)
+    window: >-
+      Locks expire on their own; the EWLock GET response returns lock_expires_in_minutes as a
+      countdown of the minutes remaining on the lock.
+    docs: https://help.agiloft.com/space/HELP/43714340/REST%20-%20Lock
+    grade: verified
+  - operation: EWDelete (GET/POST/DELETE /ewws/EWDelete)
+    reversal: null
+    window: null
+    note: >-
+      No API restore path is documented. The only control offered is the deleteRule parameter,
+      which decides what happens to dependent records BEFORE the delete commits —
+      ERROR_IF_DEPENDANTS, APPLY_DELETE_WHERE_POSSIBLE, DELETE_WHERE_POSSIBLE_OTHERWISE_UNLINK,
+      APPLY_UNLINK, UNLINK_WHERE_POSSIBLE_OTHERWISE_DELETE, REPLACE_WITH_ANOTHER (with a subs
+      parameter naming substitute records). ERROR_IF_DEPENDANTS is the conservative choice: it
+      fails rather than cascading.
+    docs: https://help.agiloft.com/space/HELP/43714569/REST%20-%20Delete
+    grade: none
+  - operation: EWUpdate (GET/POST /ewws/EWUpdate)
+    reversal: null
+    window: null
+    note: >-
+      No revert operation. Prior field values are not returned by the update call, so an agent that
+      wants to be able to reverse an update must EWRead the record first and keep the result.
+    docs: https://help.agiloft.com/space/HELP/43714575/REST%20-%20Update
+    grade: none
+  - operation: POST /ewws/webhooks
+    reversal: DELETE on the webhook resource URL returned in the Location header
+    window: null
+    docs: https://help.agiloft.com/space/HELP/43714342/Webhooks
+    grade: documented
+dry_run_mode:
+  supported: false
+  note: >-
+    No preview, simulate or validate-only mode is documented for any write operation. The nearest
+    published rehearsal surface is the in-KB Swagger UI "Try it out", which executes real calls —
+    Agiloft's docs say to use a test KB for it, never production.
+pagination:
+  style: page-number
+  params: [page, limit]
+  first_page: 0
+  limit_zero_means: all records, returned on page 0
+  applies_to: [EWSearch, EWNLPSearch]
+  response_fields: >-
+    The record count returned is scoped to the current page and page size when pagination is in
+    use, not the total match count.
+  stability: unstable
+  stability_note: >-
+    This is the important caveat for any agent paging Agiloft. Only one open query is allowed per
+    client session, and the query is rebuilt and re-run whenever the table, fields, saved search,
+    query or limit differ from the previous call. The REST interface creates a new session and
+    performs an explicit logout on EVERY call, so in practice the query is ALWAYS rebuilt and
+    re-run between pages. Agiloft states the consequence plainly: results may not be consistent
+    between calls, the dataset can appear to have gaps, and page boundaries can shift as the
+    underlying data changes. Agiloft says the ability to issue multiple REST calls within a single
+    session, as the SOAP interface allows, is in development. Clients needing parallel iteration
+    are told to open multiple sessions with the same credentials.
+  not_paginated: >-
+    EWSelect is not documented as paginated; it returns a list of record identifiers and the length
+    of that list.
+  docs:
+  - https://help.agiloft.com/space/HELP/43717730/REST%20-%20Search
+  - https://help.agiloft.com/space/HELP/119799848/REST%20-%20NLPSearch
+query_language:
+  operator_style: URL-encoded infix expressions in a single query parameter
+  operators:
+  - {op: '=', encoded: '%3D', meaning: equals}
+  - {op: '!=', encoded: '%21%3D', meaning: does not equal}
+  - {op: '~=', encoded: '%7E%3D', meaning: contains}
+  - {op: '&&', encoded: '%26%26', meaning: and}
+  - {op: '||', encoded: '%7C%7C', meaning: or}
+  - {op: '<', encoded: '%3C', meaning: less than}
+  - {op: '<=', encoded: '%3C%3D', meaning: less than or equal to}
+  - {op: '>', encoded: '%3E', meaning: greater than}
+  - {op: '>=', encoded: '%3E%3D', meaning: greater than or equal to}
+  conventions: >-
+    Search values are single-quoted; field labels containing spaces are single-quoted too; empty
+    fields are matched with null. The same expression grammar is reused by the webhook
+    record_filter parameter, though saved searches cannot be used there.
+  docs: https://help.agiloft.com/space/HELP/43717730/REST%20-%20Search
+field_selection:
+  supported: true
+  mechanism: >-
+    A repeated field parameter names each field to return — for example
+    field=id&field=text&field=body on EWSearch. Webhook subscriptions use the same idea through
+    entry_fields, which lists the field names (not labels) to include in the notification body.
+  note: >-
+    Fields are addressed by internal field NAME, not by the label shown in the GUI. EWTable returns
+    every table and field in the system, which is how a client discovers the names.
+async:
+  supported: true
+  request_parameter: '$async'
+  status_operation: 'GET/POST /ewws/EWAsyncStatus'
+  compatible_operations: [EWCreate, EWUpdate, EWDelete, EWUpsert]
+  docs: https://help.agiloft.com/space/HELP/43712580/REST%20-%20Async%20Status
+request_tracing:
+  request_id_header: not documented
+  note: >-
+    Agiloft does not document a request-id or correlation header. The EWUnexpectedException SOAP
+    fault does carry a token intended to let the vendor trace the root cause of a server-side
+    failure.
+versioning:
+  api_version_in_path: false
+  scheme: >-
+    The REST operation names are the stable contract; there is no /v1/ path segment or version
+    header on /ewws/. The platform itself is versioned by numbered releases (Release 34 as of the
+    July 2026 core release) on a February / July / November cadence with monthly maintenance
+    releases. SCIM is versioned in its own path, /scim/v2.
+  see: changelog/agiloft-changelog.yml
+rate_limit_signaling:
+  headers: none documented
+  documented_limits: none
+  note: >-
+    Agiloft's own OpenAPI Interface page states plainly that there are currently no rate limits per
+    user, token, KB or otherwise. The only throttle is the Web Services Delay: a delay, one second
+    by default, inserted after every REST and SOAP operation completes, configurable through the
+    WSDelay global variable.
+  see: rate-limits/agiloft-rate-limits.yml
+data_encoding:
+  choice_fields: encoded directly with the text value shown in the GUI; ad hoc EWSelect queries must use the id from GetChoiceLineID
+  multi_choice_fields: repeated key/value pairs (contactMethod=phone&contactMethod=email)
+  date_fields: >-
+    accepted in any of 3,275 supported formats; the parser tries formats sequentially and stops at
+    the first that succeeds
+  linked_fields: a leading colon marks a lookup by display value (f_group=:Service Manager)
+  null_clearing: '$global.null clears an entire linked set'
+cross_links:
+  authentication: authentication/agiloft-authentication.yml
+  scopes: scopes/agiloft-scopes.yml
+  errors: errors/agiloft-error-codes.yml
+  lifecycle: lifecycle/agiloft-lifecycle.yml
+  rate_limits: rate-limits/agiloft-rate-limits.yml
+  webhooks: asyncapi/agiloft-webhooks.yml

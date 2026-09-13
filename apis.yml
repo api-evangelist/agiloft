@@ -1,23 +1,191 @@
 aid: agiloft
 name: Agiloft
-description: 'Agiloft is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Agiloft is a Redwood City, California software company that sells an enterprise Contract Lifecycle
+  Management (CLM) platform built on a no-code business process engine, used by legal, procurement,
+  finance and IT teams to request, author, negotiate, approve, execute, store and report on
+  agreements. Every deployment is a customer-specific knowledgebase (KB) whose tables and fields are
+  configured per tenant, so the API surface is generated from that live configuration rather than
+  published as one fixed catalog contract. Agiloft exposes three machine interfaces on each KB: an
+  OpenAPI/Swagger interface generated from the tenant's own tables (browsable and downloadable inside
+  the KB at Setup > System > View REST documentation), a stable operation-style REST interface under
+  /ewws/ covering create, read, update, delete, upsert, select, search, attachment, lock, table
+  introspection and action-button execution, and a legacy SOAP interface whose WSDL is likewise
+  generated per knowledgebase. Authorization is OAuth 2.0 (authorization code, authorization code
+  with PKCE, and client credentials) or JWT bearer tokens, with a REST operation scope list and
+  group permissions layered on top. Agiloft also ships an outbound webhook service with URL
+  verification and retry, and SCIM 2.0 user provisioning at /scim/v2.
 url: https://raw.githubusercontent.com/api-evangelist/agiloft/refs/heads/main/apis.yml
+image: https://cdn.prod.website-files.com/69df514a8d0f4dbcfa25740b/6a749eebcf2b3e9c0d935735_logo%20(1).svg
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-09-12'
 modified: '2026-09-12'
 tags:
+- Contract Lifecycle Management
+- Contract Management
+- Legal
+- Procurement
+- Enterprise Software
+- No-Code
+- Workflow Automation
+- Document Automation
+- Webhooks
+- SCIM
 - Company
-apis: []
+apis:
+- aid: agiloft:rest
+  image: https://cdn.prod.website-files.com/69df514a8d0f4dbcfa25740b/6a749eebcf2b3e9c0d935735_logo%20(1).svg
+  name: Agiloft CLM REST API
+  description: >-
+    The Agiloft REST interface, served from every Agiloft knowledgebase under /ewws/. It exposes
+    twenty documented operations — EWCreate, EWRead, EWUpdate, EWDelete, EWUpsert, EWSelect,
+    EWSearch, EWLogin, EWLogout, EWAttach, EWAttachInfo, EWRemoveAttachment, EWRetrieve, EWLock,
+    EWTable, EWSavedSearch, EWAsyncStatus, EWActionButton, EWHotlinks and GetChoiceLineID — over
+    application/x-www-form-urlencoded requests, returning either JavaScript-evaluable EWREST_*
+    assignments or JSON when the .json decorator is used. A per-knowledgebase OpenAPI document and
+    Swagger UI, generated from the tenant's own tables and fields, is available to authenticated
+    users inside the KB.
+  humanURL: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+  baseURL: https://{subdomain}.agiloft.com/ewws
+  tags:
+  - REST
+  - Contract Lifecycle Management
+  - Contract Management
+  properties:
+  - type: Documentation
+    url: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+  - type: APIReference
+    url: https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+  - type: GettingStarted
+    url: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+  - type: Authentication
+    url: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+- aid: agiloft:webhooks
+  image: https://cdn.prod.website-files.com/69df514a8d0f4dbcfa25740b/6a749eebcf2b3e9c0d935735_logo%20(1).svg
+  name: Agiloft CLM Webhooks
+  description: >-
+    Agiloft's outbound event surface. A webhook is registered per table and event type (Create,
+    Update or Delete), optionally filtered by a record-filter expression and by modification type
+    (Email, Web or API), and Agiloft POSTs the selected field values to the subscriber's HTTPS URL
+    when the event fires. Registration is performed either in Setup > Integration > Webhooks Setup
+    or through the /ewws/webhooks REST resource, and Agiloft verifies the subscriber URL with a GET
+    carrying a Verification-Code header before the subscription becomes active.
+  humanURL: https://help.agiloft.com/space/HELP/43714342/Webhooks
+  baseURL: https://{subdomain}.agiloft.com/ewws/webhooks
+  tags:
+  - Webhooks
+  - Events
+  properties:
+  - type: Documentation
+    url: https://help.agiloft.com/space/HELP/43714342/Webhooks
+  - type: Webhooks
+    url: asyncapi/agiloft-webhooks.yml
+- aid: agiloft:scim
+  image: https://cdn.prod.website-files.com/69df514a8d0f4dbcfa25740b/6a749eebcf2b3e9c0d935735_logo%20(1).svg
+  name: Agiloft CLM SCIM 2.0 Service
+  description: >-
+    Agiloft's SCIM 2.0 user provisioning endpoint, served per knowledgebase at /scim/v2 and
+    authenticated with a bearer token generated from the KB's SCIM profile. An identity provider
+    that speaks SCIM 2.0 — Microsoft Entra ID and Okta are documented explicitly — creates,
+    updates, deactivates and reactivates People records in the KB. Group and custom-attribute
+    synchronization are not supported at this time.
+  humanURL: https://help.agiloft.com/space/HELP/778928159/Set%20Up%20SCIM
+  baseURL: https://{subdomain}.agiloft.com/scim/v2
+  tags:
+  - SCIM
+  - Identity
+  - Provisioning
+  properties:
+  - type: Documentation
+    url: https://help.agiloft.com/space/HELP/778928159/Set%20Up%20SCIM
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: TrustCenter
+  url: security/agiloft-trust-center.yml
+- type: DomainSecurity
+  url: security/agiloft-domain-security.yml
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://www.agiloft.com/
+- type: DeveloperPortal
+  url: https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+- type: Documentation
+  url: https://help.agiloft.com/
+- type: APIReference
+  url: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+- type: GettingStarted
+  url: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+- type: Support
+  url: https://community.agiloft.com/home
+- type: Blog
+  url: https://www.agiloft.com/blog
+- type: Pricing
+  url: https://www.agiloft.com/pricing
+- type: SignUp
+  url: https://www.agiloft.com/lets-talk
+- type: Login
+  url: https://community.agiloft.com/login
+- type: TermsOfService
+  url: https://www.agiloft.com/terms-of-service
+- type: PrivacyPolicy
+  url: https://www.agiloft.com/privacy-policy
+- type: Compliance
+  url: https://www.agiloft.com/terms-policies/security
+- type: LLMsTxt
+  url: llms/agiloft-llms.txt
+- type: Authentication
+  url: authentication/agiloft-authentication.yml
+- type: OAuthScopes
+  url: scopes/agiloft-scopes.yml
+- type: Conventions
+  url: conventions/agiloft-conventions.yml
+- type: Idempotency
+  url: conventions/agiloft-conventions.yml
+- type: ErrorCatalog
+  url: errors/agiloft-error-codes.yml
+- type: Lifecycle
+  url: lifecycle/agiloft-lifecycle.yml
+- type: ChangeLog
+  url: changelog/agiloft-changelog.yml
+- type: Conformance
+  url: conformance/agiloft-conformance.yml
+- type: RateLimits
+  url: rate-limits/agiloft-rate-limits.yml
+- type: Plans
+  url: plans/agiloft-plans-pricing.yml
+- type: Packages
+  url: packages/agiloft-packages.yml
+- type: Webhooks
+  url: asyncapi/agiloft-webhooks.yml
+- type: X-MCPServerCandidate
+  url: mcp/agiloft-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DataModel
+  url: data-model/agiloft-data-model.yml
+- type: Sandbox
+  url: sandbox/agiloft-sandbox.yml
+x-enrichment:
+  date: '2026-09-12'
+  status: enriched
+  artifacts_added: 23
+  pass: local-v3
+x-coverage:
+  state: covered
+  detail: >-
+    Agiloft's OpenAPI document and SOAP WSDL are both real but both generated per customer
+    knowledgebase and reachable only from inside an authenticated KB, so no machine-readable
+    contract could be harvested. Everything else — the twenty-operation REST reference, the webhook
+    catalog, OAuth 2.0 with PKCE, SCIM 2.0, the release notes, the SLA and the certifications — is
+    published openly at help.agiloft.com and www.agiloft.com and was captured.
+  evidence:
+  - url: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+    status: 200
+  - url: https://help.agiloft.com/llms.txt
+    status: 200
+  checked: '2026-09-12'

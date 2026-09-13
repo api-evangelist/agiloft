@@ -1,0 +1,65 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43714795/Control%20Access%20to%20REST%20API%20Operations
+docs: https://help.agiloft.com/space/HELP/43714795/Control%20Access%20to%20REST%20API%20Operations
+note: >-
+  Agiloft's scope model has two distinct halves and neither is a conventional OAuth scope string
+  namespace. (1) The OAuth 2.0 authorization request carries exactly one scope value of the form
+  permissions_for:{CONTACT_ID}, naming the Agiloft contact record whose permissions the token will
+  carry — the permission set itself lives on that user, not in the scope string. (2) A separate
+  Scope parameter, configured at Setup > Integration > Access Token API > Configure, restricts
+  which REST operations a given access token may invoke. A blank Scope parameter grants every
+  operation, which the docs flag as a hazard. Both are documented publicly; no scope catalogue was
+  derived from a spec because Agiloft's OpenAPI is generated per knowledgebase behind KB login.
+schemes:
+- name: OAuth2
+  source: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://{hostname}/ewws/oauth
+    tokenUrl: https://{hostname}/ewws/otoken
+  - flow: authorizationCodePKCE
+    authorizationUrl: https://{hostname}/ewws/oauth
+    tokenUrl: https://{hostname}/ewws/otoken
+  - flow: clientCredentials
+    tokenUrl: https://{hostname}/ewws/otoken
+scopes:
+- scope: 'permissions_for:{CONTACT_ID}'
+  description: >-
+    The only OAuth scope value Agiloft accepts. CONTACT_ID is the numeric id of the Agiloft contact
+    record configured in the API application's "Associate this Application with Contact ID" field —
+    for example permissions_for:222. The token then carries that user's group permissions.
+  flows: [authorizationCode, authorizationCodePKCE]
+  required: true
+  sources: [https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API]
+operation_scopes:
+  parameter: Scope
+  configured_at: Setup > Integration > Access Token API > Configure > Advanced configuration
+  default_when_blank: all operations granted
+  applies_to: REST access tokens
+  supports_per_user_lists: true
+  supports_default_list: true
+  operations:
+  - {operation: EWCreate, description: Create a record in a table}
+  - {operation: EWRead, description: Read a record by id}
+  - {operation: EWUpdate, description: Update fields on an existing record}
+  - {operation: EWDelete, description: Delete one or more records}
+  - {operation: REST, description: 'The /ewws/REST/{kbName}/{table}[/{id}] resource-style interface'}
+  - {operation: EWBroadcast, description: Broadcast operation}
+  - {operation: EWSelect, description: Limited SQL-style select returning record identifiers}
+  - {operation: EWSearch, description: Saved-search and ad hoc query search}
+  - {operation: EWGetChoiceLineID, description: Resolve the internal id of a choice value}
+  - {operation: EWHotlinks, description: Create a secure hotlink for third-party portal integration}
+  - {operation: EWAttach, description: Attach a file to a record}
+  - {operation: EWRetrieve, description: Retrieve an attachment}
+  - {operation: EWRemoveAttachment, description: Remove an attachment from a record}
+  - {operation: EWOData, description: OData operation named in the scope list; no public OData reference is published}
+  - {operation: EWTable, description: List every table and field in the system}
+  - {operation: EWSavedSearch, description: Return details about a saved search defined in a table}
+  - {operation: EWAttachInfo, description: Return attachment metadata for a record}
+  - {operation: webhooks, description: Register, read, update and delete webhook subscriptions}
+  - {operation: EWActionButton, description: Run an action button from a specified record}
+  - {operation: EWAsyncStatus, description: Check the execution status of an asynchronous call}
+  note: >-
+    EWUpsert is documented as a REST operation but does not appear in the published Available
+    Operations list for the Scope parameter; do not assume it can be scoped independently.

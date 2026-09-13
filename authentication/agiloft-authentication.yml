@@ -1,0 +1,117 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+docs: https://help.agiloft.com/space/HELP/43714573/API%20Security
+note: >-
+  Derived from the published documentation rather than from an OpenAPI securitySchemes block:
+  Agiloft's OpenAPI document is generated per knowledgebase and is only reachable from inside an
+  authenticated KB (Setup > System > View REST documentation), so there is no public spec to
+  parse. Every scheme below is stated in Agiloft's own public docs.
+summary:
+  types: [oauth2, http, apiKey]
+  api_key_in: [query, body]
+  oauth2_flows: [authorizationCode, authorizationCodePKCE, clientCredentials]
+  bearer_formats: [JWT, OAuth2 access token, SCIM bearer token]
+schemes:
+- name: OAuth2AuthorizationCode
+  type: oauth2
+  flow: authorizationCode
+  authorizationUrl: https://{hostname}/ewws/oauth
+  tokenUrl: https://{hostname}/ewws/otoken
+  grant_types: [authorization_code]
+  scope_form: 'permissions_for:{CONTACT_ID}'
+  token_expiry_minutes_default: 15
+  token_expiry_minutes_range: [1, 60]
+  authorization_code_lifetime: 5 minutes
+  docs: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+  note: >-
+    Client registration happens in the KB at Setup > Integration > OAuth2 Client Setup. Each OAuth
+    client is bound to one native Agiloft service-user account and every call made with its tokens
+    runs as that account. Reusing one account across clients invalidates the other clients' tokens
+    on refresh.
+- name: OAuth2AuthorizationCodePKCE
+  type: oauth2
+  flow: authorizationCode
+  pkce: true
+  code_challenge_methods: [S256, plain]
+  code_verifier_length: [43, 128]
+  grant_types: [authorization_code_pkce]
+  authorizationUrl: https://{hostname}/ewws/oauth
+  tokenUrl: https://{hostname}/ewws/otoken
+  recommended_for: public clients
+  spec: RFC 7636
+  docs: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+- name: OAuth2ClientCredentials
+  type: oauth2
+  flow: clientCredentials
+  tokenUrl: https://{hostname}/ewws/otoken
+  grant_types: [client_credentials]
+  use_case: machine-to-machine integration with no user interaction
+  docs: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+- name: JWTBearer
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  token_endpoint: https://{hostname}/ewws/EWLogin
+  revocation_endpoint: https://{hostname}/ewws/EWLogout
+  refresh: 'POST /ewws/EWLogin?$KB={kb}&$lang={lang}&refresh_token={token}'
+  default_expiry_minutes: 15
+  max_expiry_minutes: 60
+  expiry_global_variable: token_expires_in
+  response_fields: [access_token, refresh_token, expiration_time_unit, expires_in, authentication_scheme]
+  docs: https://help.agiloft.com/space/HELP/43714204/REST%20-%20Login
+  note: >-
+    EWLogin returns an access token plus the authentication scheme to prefix it with; the docs say
+    Bearer is the default. Using the token in an Authorization header is how Agiloft recommends
+    keeping credentials out of REST URLs.
+- name: BasicCredentialParameters
+  type: apiKey
+  in: query
+  names: ['$login', '$password']
+  also_accepted_in: request body (POST)
+  applies_to: [EWRead, EWSelect, EWCreate, EWUpdate, EWDelete]
+  docs: https://help.agiloft.com/space/HELP/43714573/API%20Security
+  note: >-
+    The legacy credential-in-parameter style. Agiloft documents passing the pair in a POST body
+    rather than the query string so the credentials are not in the URL. Not recommended for new
+    integrations.
+- name: ExtAuth
+  type: http
+  scheme: bearer
+  status: legacy
+  docs: https://help.agiloft.com/space/HELP/703889445
+  note: >-
+    Agiloft's pre-OAuth authorization mechanism, still supported for backward compatibility with
+    existing integrations. Issues bearer access tokens like OAuth 2.0 but uses different endpoints,
+    configuration and an different authorization model.
+- name: SCIMBearerToken
+  type: http
+  scheme: bearer
+  surface: https://{hostname}/scim/v2
+  docs: https://help.agiloft.com/space/HELP/778928159/Set%20Up%20SCIM
+  note: >-
+    Generated per SCIM profile in the KB; multiple tokens per profile are supported so credentials
+    can be rotated without interrupting provisioning. Shown once at generation time.
+sso:
+  saml2: https://help.agiloft.com/space/HELP/43718160
+  oauth2: https://help.agiloft.com/space/HELP/43716464/Use%20OAuth2%20to%20Access%20REST%20API
+  note: SCIM provisioning is supported alongside either SSO method.
+authorization_controls:
+- control: group permissions
+  note: >-
+    API calls return only data the authenticated user's group permissions allow, at table, record
+    and field level. The API respects the same ownership model as the GUI.
+  docs: https://help.agiloft.com/space/HELP/43714573/API%20Security
+- control: interface allow-list
+  note: >-
+    Groups must be explicitly listed under Setup > System > Manage Web Services > Groups allowed
+    for REST (and the SOAP equivalent). A user outside those groups gets 403 even with full record
+    permissions.
+- control: operation scopes
+  note: >-
+    A Scope parameter on the access-token configuration restricts which REST operations a token may
+    call. A blank Scope grants every operation.
+  see: scopes/agiloft-scopes.yml
+- control: IP allow/deny lists
+  global_variables: ['Security: REST IP Blacklist', 'Security: REST IP Whitelist', 'Security: SOAP IP Blacklist', 'Security: SOAP IP Whitelist']
+  docs: https://help.agiloft.com/space/HELP/43714573/API%20Security

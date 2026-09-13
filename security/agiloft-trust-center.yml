@@ -1,0 +1,53 @@
+generated: '2026-09-12'
+method: searched
+probe: true
+url: https://www.agiloft.com/terms-policies/security
+note: >-
+  Agiloft has no separate trust.agiloft.com portal (the host does not resolve). Its security and
+  compliance posture is published as a page in the Terms & Policies directory on the main site.
+  Certifications below were read from that page directly; the automated probe additionally matched
+  HIPAA and GDPR, which on that page refer to AWS's compliance as Agiloft's hosting provider rather
+  than to Agiloft's own attestations, so they are recorded separately under hosting_provider.
+certifications:
+- SOC 1
+- SOC 2
+- ISO 27001
+- ISO 27701
+hosting_provider:
+  provider: AWS
+  claims_on_page: [SSAE 18, SOC 2 Type 2, HIPAA, GDPR]
+  note: >-
+    These are AWS's compliance claims, cited on Agiloft's security page as properties of the
+    hosting infrastructure. They are not Agiloft attestations and are kept out of the
+    certifications list on purpose.
+practices:
+- >-
+    Third-party penetration assessments of the Agiloft application and hosting infrastructure,
+    performed annually and after every major upgrade, using both manual and automated techniques
+    to search for technical vulnerabilities.
+- Fully redundant AWS hosting, available inside or outside the USA.
+related_policies:
+- {name: Security, url: 'https://www.agiloft.com/terms-policies/security'}
+- {name: Data Processing Addendum, url: 'https://www.agiloft.com/terms-policies/data-processing-addendum'}
+- {name: EU Data Act Addendum, url: 'https://www.agiloft.com/terms-policies/eu-data-act-addendum'}
+- {name: Subprocessor List, url: 'https://www.agiloft.com/terms-policies/subprocessor-list'}
+- {name: Privacy Shield Notice, url: 'https://www.agiloft.com/terms-policies/privacy-shield-notice'}
+- {name: Service Level Addendum, url: 'https://www.agiloft.com/terms-policies/service-level-addendum'}
+- {name: Terms & Policies directory, url: 'https://www.agiloft.com/terms-policies'}
+evidence:
+- source: https://www.agiloft.com/terms-policies/security
+  http_status: 200
+  fetched: '2026-09-12'
+  quote: >-
+    "With SOC 1, SOC 2, ISO 27001, and ISO 27701 certification, Agiloft's customers can be
+    confident that their data is secure."
+vulnerability_disclosure:
+  published: false
+  note: >-
+    No security.txt (404 on every host), no bug bounty program on HackerOne, Bugcrowd or Intigriti,
+    and no responsible-disclosure or vulnerability-disclosure page — /responsible-disclosure,
+    /security/responsible-disclosure and /vulnerability-disclosure all 404 on www.agiloft.com. The
+    security page describes penetration testing but names no intake channel for an outside
+    reporter. No VulnerabilityDisclosure artifact is written and no Security-typed disclosure
+    pointer is emitted on that basis; the Security pointer in apis.yml points at the published
+    security policy page, which does exist.

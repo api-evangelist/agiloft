@@ -1,0 +1,179 @@
+generated: '2026-09-12'
+method: derived
+status: candidate
+source: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+note: >-
+  Agiloft ships NO MCP server. Searched 2026-09-12: no server in the Agiloft docs (help.agiloft.com
+  spaces HELP, Astra and SD), no @agiloft or agiloft package on npm or PyPI, no Agiloft GitHub
+  organization (api.github.com/orgs/agiloft returns 404) and no listing in the public MCP
+  registries. Agiloft's AI products — Ask AI and Astra — run inside the product rather than
+  exposing an agent-callable endpoint. The tool list below is a CANDIDATE derived from Agiloft's
+  own published REST operation table; it describes what an MCP server over this API would expose,
+  and asserts nothing about Agiloft. It is pointed at from apis.yml as X-MCPServerCandidate, never
+  MCPServer.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: oauth
+  verified: searched
+server:
+  name: agiloft
+  transport: null
+  url: null
+derivation:
+  basis: the twenty operations published in the REST Interface reference, plus the webhook resource
+  input_schema_fidelity: >-
+    Parameter names below come from Agiloft's published reference. They are NOT a full inputSchema:
+    the record fields every write operation accepts are whatever that tenant's table defines, and
+    are only discoverable at runtime through EWTable or the KB's own generated OpenAPI. Any real
+    MCP server over Agiloft would have to build its schemas per knowledgebase.
+tools:
+- name: read_record
+  description: Read a record by id from a table
+  method: GET
+  endpoint: /ewws/EWRead
+  parameters: ['$KB', '$table', id]
+  source_documentation: https://help.agiloft.com/space/HELP/43714567/REST%20-%20Read
+- name: create_record
+  description: Create a record in a table, returning its new id
+  method: POST
+  endpoint: /ewws/EWCreate
+  parameters: ['$KB', '$table', '<field_name>...']
+  mutating: true
+  source_documentation: https://help.agiloft.com/space/HELP/43714571/REST%20-%20Create
+- name: update_record
+  description: Update fields on an existing record
+  method: POST
+  endpoint: /ewws/EWUpdate
+  parameters: ['$KB', '$table', id, '<field_name>...']
+  mutating: true
+  source_documentation: https://help.agiloft.com/space/HELP/43714575/REST%20-%20Update
+- name: upsert_record
+  description: Create a record if no match exists, otherwise update the matching record
+  method: POST
+  endpoint: /ewws/EWUpsert
+  parameters: ['$KB', '$table', '$query', '<field_name>...']
+  mutating: true
+  idempotent: true
+  source_documentation: https://help.agiloft.com/space/HELP/763691019/REST%20-%20Upsert
+- name: delete_records
+  description: Delete one or more records, applying a dependent-record strategy
+  method: POST
+  endpoint: /ewws/EWDelete
+  parameters: ['$KB', '$table', id, deleteRule, subs]
+  mutating: true
+  irreversible: true
+  source_documentation: https://help.agiloft.com/space/HELP/43714569/REST%20-%20Delete
+- name: select_records
+  description: Limited SQL-style select returning a list of record identifiers and its length
+  method: POST
+  endpoint: /ewws/EWSelect
+  parameters: ['$KB', '$table']
+  source_documentation: https://help.agiloft.com/space/HELP/43714549/REST%20-%20Select
+- name: search_records
+  description: Run a saved search or an ad hoc query and return selected fields
+  method: POST
+  endpoint: /ewws/EWSearch
+  parameters: ['$KB', '$table', field, query]
+  source_documentation: https://help.agiloft.com/space/HELP/43717730/REST%20-%20Search
+- name: nlp_search
+  description: Natural-language search across a table
+  method: POST
+  endpoint: /ewws/EWNLPSearch
+  endpoint_note: >-
+    The reference names the operation EWNLPSearch but does not print a full example URL; the path
+    follows Agiloft's /ewws/{operation} convention.
+  parameters: ['$KB', field, nlp_query, page, limit]
+  source_documentation: https://help.agiloft.com/space/HELP/119799848/REST%20-%20NLPSearch
+- name: get_saved_search
+  description: Return details about a saved search defined in a table
+  method: GET
+  endpoint: /ewws/EWSavedSearch
+  parameters: ['$KB', '$table']
+  source_documentation: https://help.agiloft.com/space/HELP/43714188/REST%20-%20Saved%20Search
+- name: list_tables_and_fields
+  description: Return every table and field in the knowledgebase — the runtime schema discovery call
+  method: GET
+  endpoint: /ewws/EWTable
+  parameters: ['$KB']
+  source_documentation: https://help.agiloft.com/space/HELP/43715609/REST%20-%20Table
+- name: get_choice_line_id
+  description: Resolve the internal id of a choice value, required for ad hoc EWSelect queries
+  method: GET
+  endpoint: /ewws/GetChoiceLineID
+  parameters: ['$KB', '$table']
+  source_documentation: https://help.agiloft.com/space/HELP/43714380/REST%20-%20GetChoiceLineId
+- name: attach_file
+  description: Attach a file to a record
+  method: PUT
+  endpoint: /ewws/EWAttach
+  parameters: ['$KB', '$table', id]
+  mutating: true
+  source_documentation: https://help.agiloft.com/space/HELP/43714376/REST%20-%20Attach
+- name: get_attachment_info
+  description: Return metadata about a record's attachments
+  method: GET
+  endpoint: /ewws/EWAttachInfo
+  parameters: ['$KB', '$table', id]
+  source_documentation: https://help.agiloft.com/space/HELP/43715898/REST%20-%20AttachInfo
+- name: retrieve_attachment
+  description: Retrieve an attachment from a record
+  method: GET
+  endpoint: /ewws/EWRetrieve
+  parameters: ['$KB', '$table', id]
+  source_documentation: https://help.agiloft.com/space/HELP/43714587/REST%20-%20Retrieve%20Attachment
+- name: remove_attachment
+  description: Remove an attachment from a record
+  method: POST
+  endpoint: /ewws/EWRemoveAttachment
+  parameters: ['$KB', '$table', id]
+  mutating: true
+  source_documentation: https://help.agiloft.com/space/HELP/43714589/REST%20-%20Remove%20Attachment
+- name: record_lock
+  description: Check, set or release the lock on a record
+  method: GET/PUT/DELETE
+  endpoint: /ewws/EWLock
+  parameters: ['$KB', '$table', id]
+  mutating: true
+  reversible: true
+  source_documentation: https://help.agiloft.com/space/HELP/43714340/REST%20-%20Lock
+- name: run_action_button
+  description: Run an action button from a specified record
+  method: POST
+  endpoint: /ewws/EWActionButton
+  parameters: ['$KB', '$table', id]
+  mutating: true
+  consequence: >-
+    An action button can trigger arbitrary configured behaviour in that tenant's workflow — email,
+    e-signature dispatch, state transitions. Its blast radius is defined per KB and is not knowable
+    from the API contract.
+  source_documentation: https://help.agiloft.com/space/HELP/43717142/REST%20-%20Action%20Button
+- name: get_async_status
+  description: Check the execution status of an asynchronous call
+  method: GET
+  endpoint: /ewws/EWAsyncStatus
+  parameters: ['$KB']
+  source_documentation: https://help.agiloft.com/space/HELP/43712580/REST%20-%20Async%20Status
+- name: manage_webhooks
+  description: Register, retrieve, update or delete webhook subscriptions
+  method: POST/GET/PUT/DELETE
+  endpoint: /ewws/webhooks
+  mutating: true
+  source_documentation: https://help.agiloft.com/space/HELP/43714342/Webhooks
+- name: create_hotlink
+  description: Create a secure hotlink for integrating Agiloft into a third-party portal
+  method: POST
+  endpoint: /ewws/EWHotlinks
+  mutating: true
+  source_documentation: https://help.agiloft.com/space/HELP/43715003
+authentication:
+  required: true
+  model: OAuth 2.0 bearer token (authorization code, PKCE, or client credentials) or a JWT from EWLogin
+  see: authentication/agiloft-authentication.yml
+tool_crosswalk: null
+tool_crosswalk_reason: >-
+  No crosswalk is emitted. A crosswalk binds real MCP tools to real OpenAPI operationIds; Agiloft
+  has neither a published MCP server nor a public OpenAPI, so every row would be a mapping between
+  two things we derived ourselves.

@@ -1,0 +1,45 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+docs: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+limit_count: 0
+headers: []
+status_on_exhaustion: null
+note: >-
+  Agiloft states the absence explicitly rather than leaving it undocumented, which is itself the
+  finding. The OpenAPI Interface page says verbatim: "Currently, there are no rate limits per user,
+  token, KB, or otherwise." No X-RateLimit-*, RateLimit-* or Retry-After headers are documented on
+  any surface, and no 429 behaviour is described. What does exist is a fixed per-call delay rather
+  than a quota, captured below. An agent calling Agiloft therefore has no runtime backpressure
+  signal to read — throughput is bounded by the WSDelay pause, not by a budget it can observe.
+limits: []
+throttles:
+- name: Web Services Delay
+  mechanism: fixed delay inserted after each REST and SOAP operation completes
+  default: 1 second
+  configurable: true
+  global_variable: WSDelay
+  scope: every /ewws/ REST call and every SOAP call
+  effective_ceiling: roughly one operation per second per session at the default setting
+  rationale: >-
+    Agiloft's stated reasons are that an operation on a record may invoke rules and other functions
+    that need time and resources to complete, and that client applications could mistakenly overuse
+    web services and flood the server.
+  docs: https://help.agiloft.com/space/HELP/43715778/REST%20Interface
+other_ceilings:
+- name: access token lifetime
+  value: 15 minutes by default, configurable 1-60
+  note: Not a rate limit, but the practical bound on how long a client can call without re-authenticating.
+- name: authorization code lifetime
+  value: 5 minutes
+- name: active webhook maximum
+  value: not published
+  note: >-
+    A WEBHOOK_LIMIT_EXCEEDED error exists ("the events array has reached the maximum number of
+    active webhooks") but the numeric maximum is not stated anywhere in the public docs.
+bulk_guidance: >-
+  Agiloft explicitly steers bulk work off the API: "The API interfaces are most suited for online
+  integration between systems or testing purposes. They're not recommended for processes that
+  involve bulk synchronization," pointing instead at Importing Record Data, Pushing Changes to
+  Production, Microsoft Exchange Synchronization, the External System Adapter and prebuilt
+  integrations.

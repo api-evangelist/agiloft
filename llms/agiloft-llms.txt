@@ -1,0 +1,17 @@
+# Refined for Cloud
+
+LLM-optimized index. Confluence: add `.md` to page URLs (e.g. `/space/TEAM/426300.md`). Space `.md` URLs return a page index. Refined landing pages: `/page/{slug}.md`. Site overview: `/index.md`.
+
+## Site structure
+
+- [Refined Site](https://help.agiloft.com/index.md) — Site overview
+
+  - [CLM Help](https://help.agiloft.com/space/HELP/) — Space key: `HELP`
+    - Index: [HELP.md](https://help.agiloft.com/space/HELP.md)
+  - [Astra Help](https://help.agiloft.com/space/Astra/) — Space key: `Astra`
+    - Index: [Astra.md](https://help.agiloft.com/space/Astra.md)
+  - [Standard System Documentation](https://help.agiloft.com/space/SD/) — Space key: `SD`
+    - Index: [SD.md](https://help.agiloft.com/space/SD.md)
+
+---
+Generated: 2026-09-12T23:49:17.866Z

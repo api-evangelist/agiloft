@@ -1,0 +1,78 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43715609/REST%20-%20Table
+entities: []
+relationships: []
+note: >-
+  Agiloft has no fixed public data model, and that is a finding rather than a gap. Every Agiloft
+  deployment is a knowledgebase whose tables and fields are configured per customer on a no-code
+  platform, so the entity set an integrator meets is that tenant's, not a catalog schema. This is
+  also why Agiloft's OpenAPI document is generated per KB from the live configuration. No entities
+  or relationships are enumerated here because doing so would mean inventing a schema Agiloft does
+  not publish.
+discovery:
+  runtime_schema_endpoint:
+    operation: EWTable
+    method: GET/POST
+    path: /ewws/EWTable
+    returns: a list of all the tables and fields in the system
+    docs: https://help.agiloft.com/space/HELP/43715609/REST%20-%20Table
+    note: This is the correct first call for any client or agent binding to an unknown Agiloft KB.
+  generated_openapi:
+    location: Setup > System > View REST documentation (in-KB Swagger UI)
+    download: Download Open API JSON
+    docs: https://help.agiloft.com/space/HELP/929595396/OpenAPI%20Interface
+    note: Includes entries for the tables and fields specific to that system.
+  field_wizard:
+    note: Logical field names — the names the API uses, as opposed to GUI labels — are found in the Field Wizard.
+  logical_table_names:
+    note: >-
+      Tables are addressed by Logical Table Name (Setup > Tables > Edit), which is case sensitive
+      and may be dotted to express subtabling — contacts.employees is the Employee subtable of
+      Contacts.
+conventions:
+  identifier: an integer id per record, returned by EWCreate and required by EWRead/EWUpdate/EWDelete
+  inheritance: >-
+    Table types extend a common EWWSBaseUserObject type in the SOAP model; generic methods take and
+    return that ancestor and the client typecasts to the table-specific descendant.
+  linked_fields: >-
+    Relationships between tables are expressed as Linked Fields, which import values from a source
+    table and may propagate changes. Over the API a linked value is set by prefixing the display
+    value with a colon.
+  referential_integrity: >-
+    Linked-field data is validated on create and update, and deletes are constrained so integrity
+    is maintained — EWDelete's deleteRule parameter chooses whether dependents are deleted,
+    unlinked, replaced, or the whole operation refused.
+  ownership: >-
+    Record ownership is evaluated at call time and drives table-level and field-level permissions.
+    Ownership changes do not cascade unless a Linked Field is configured to propagate them.
+standard_system:
+  note: >-
+    Agiloft documents the out-of-the-box configuration — the tables a customer starts from before
+    modification — in the Standard System Documentation space. That is the closest thing to a
+    reference data model, and it describes a starting point, not a contract.
+  url: https://help.agiloft.com/space/SD
+field_types:
+  webhook_serializable:
+  - Append Only Text
+  - Calculated Result
+  - Choice
+  - Currency
+  - Date
+  - Date/Time
+  - Email
+  - Floating Point
+  - Integer
+  - Long Integer
+  - Multi Choice
+  - Percentage
+  - Short Text
+  - Telephone/Fax
+  - Text
+  - Time
+  - URL
+  - Linked field (only where convertible to a text value)
+  note: >-
+    Field types outside this list cannot be carried in a webhook body and must be fetched with a
+    follow-up REST call. It is the only published enumeration of Agiloft's field type system.
+  source: https://help.agiloft.com/space/HELP/43714342/Webhooks

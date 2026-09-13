@@ -1,0 +1,80 @@
+generated: '2026-09-12'
+method: searched
+source: https://help.agiloft.com/space/HELP/43715649/What's%20New
+versioning:
+  scheme: numbered platform releases; no version segment in the REST path
+  current: Release 34
+  current_release_date: '2026-07'
+  cadence:
+    core_platform: February, July and November feature releases, plus monthly maintenance releases
+    connected_services: monthly feature releases, plus anytime maintenance releases
+  docs: https://help.agiloft.com/space/HELP/43715649/What's%20New
+  api_versioning_note: >-
+    The /ewws/ REST operation names are the versioned surface — there is no /v1/ segment, Accept
+    header version, or date-pinned API version. SCIM is the exception and carries its version in
+    the path (/scim/v2). Each KB's generated OpenAPI document therefore describes that KB at that
+    moment, not a stable public API version.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No published API deprecation policy, no RFC 8594 Sunset or Deprecation header support, and no
+    documented notice period for removing an operation. Retirements surface only as release-note
+    entries — the July 2026 core release carried a "Removing obsolete integrations" item, and the
+    docs mark the SOAP interface as legacy and not recommended for new integrations without naming
+    a removal date. An integrator has no machine-readable signal that an operation is going away.
+deprecated_surfaces:
+- surface: SOAP Web Services API
+  status: legacy
+  note: >-
+    "SOAP-based web services are available but aren't recommended for new integrations. The
+    OpenAPI and REST interfaces provide broader functionality and are actively maintained." SOAP
+    is disabled by default on new knowledgebases.
+  docs: https://help.agiloft.com/space/HELP/43716450/Legacy%20SOAP%20API%20Setup
+  sunset_date: null
+- surface: ExtAuth authorization mechanism
+  status: legacy
+  note: >-
+    Agiloft's pre-OAuth token mechanism, retained for backward compatibility with existing
+    integrations. OAuth 2.0 is the recommended protocol for new integrations.
+  docs: https://help.agiloft.com/space/HELP/703889445
+  sunset_date: null
+- surface: REST /ewws/ operation interface
+  status: maintained-but-secondary
+  note: >-
+    Agiloft now directs new integrations to the generated OpenAPI interface and positions the
+    /ewws/ operations as the fallback — "use the REST interface if you already use it for an
+    existing integration or need to access an endpoint that isn't exposed through OpenAPI."
+  docs: https://help.agiloft.com/space/HELP/43716366/API%20Web%20Services
+sla:
+  url: https://www.agiloft.com/terms-policies/service-level-addendum
+  uptime_target: '99.7%'
+  measurement_window: calendar month
+  service_credits:
+  - {availability: '>=99.7%', credit: none}
+  - {availability: '<99.7% and >=95%', credit: 5% of the monthly fee}
+  - {availability: '<95%', credit: monthly fee multiplied by the percentage of time the service was unavailable}
+  version: '1.0'
+  last_updated: '2025-04-11'
+  note: Service credits must be requested by the customer; downtime is measured and monitored by Agiloft in good faith.
+status_page:
+  url: null
+  probed: https://status.agiloft.com/
+  http_status: 200
+  verdict: dead
+  note: >-
+    status.agiloft.com resolves and answers 200, but the body is the Site24x7 StatusIQ error card
+    reading "No status page found with this domain mapping" — the CNAME still points at StatusIQ
+    but the status page behind it is gone or unmapped. This is a soft-404, so no StatusPage pointer
+    is emitted; scoring a dead page as a live one would credit Agiloft with operational
+    transparency it does not currently serve. This is a one-line fix on Agiloft's side (restore the
+    StatusIQ domain mapping) and worth reporting to them.
+support:
+  community: https://community.agiloft.com/home
+  support_login: https://www.agiloft.com/support-login.htm
+  support_plans: https://www.agiloft.com/support-plans
+  support_addendum: https://www.agiloft.com/terms-policies/support-addendum
+maintenance:
+  addendum: https://www.agiloft.com/terms-policies/maintenance-addendum
+  note: Scheduled updates and upgrades are performed during a defined Maintenance Window with reasonable advance notice.
