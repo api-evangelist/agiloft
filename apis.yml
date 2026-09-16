@@ -29,6 +29,18 @@ tags:
 - Procurement
 - Enterprise Software
 - No-Code
+- Workflow-Automation
+- Document Automation
+- Webhook
+- SCIM
+- Company
+tags_raw:
+- Contract Lifecycle Management
+- Contract Management
+- Legal
+- Procurement
+- Enterprise Software
+- No-Code
 - Workflow Automation
 - Document Automation
 - Webhooks
@@ -75,6 +87,9 @@ apis:
   humanURL: https://help.agiloft.com/space/HELP/43714342/Webhooks
   baseURL: https://{subdomain}.agiloft.com/ewws/webhooks
   tags:
+  - Webhook
+  - Event
+  tags_raw:
   - Webhooks
   - Events
   properties:
