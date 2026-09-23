@@ -1,0 +1,29 @@
+# Front Door AI Index — agiloft — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: agiloft
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: www.agiloft.com
+  final_host: www.agiloft.com
+  ownership: own
+  owner: agiloft
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 15
+  host_score: 15
+  density: 13.85
+  words: 1083
+  tiers:
+    agentic: 0
+    core: 15
+    model: 0
+  ambiguous: 11
+  top_terms:
+    AI: 14
+    intelligence: 7
+    automation: 3
+    LLMs: 1
+    agent: 1
