@@ -29,7 +29,7 @@ tags:
 - Procurement
 - Enterprise Software
 - No-Code
-- Workflow-Automation
+- Workflow Automation
 - Document Automation
 - Webhook
 - SCIM
@@ -46,6 +46,7 @@ tags_raw:
 - Webhooks
 - SCIM
 - Company
+- Workflow-Automation
 apis:
 - aid: agiloft:rest
   image: https://cdn.prod.website-files.com/69df514a8d0f4dbcfa25740b/6a749eebcf2b3e9c0d935735_logo%20(1).svg
